@@ -1,23 +1,7 @@
-const EventEmitter = require('events');
-
-class MyEmitter extends EventEmitter {}
-
-const myEmitter = new MyEmitter();
-
-
-module.exports.barsEvent = myEmitter;
-
-
-var _bars = [];
+var bars = [];
 
 module.exports.OnBarsLoaded = function(bars){
-    _bars = bars
-
-    this.setState({ 
-        refresh: !this.state.refresh
-    })
-
-    myEmitter.emit('event');
+    this.bars = bars
 }
 
-module.exports.bars = _bars;
+module.exports.bars = bars;
