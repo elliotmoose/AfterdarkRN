@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { View, Text,Button} from 'react-native';
 
-export class Home extends Component {
+export class Settings extends Component {
   render() {
     return (
       <View>
@@ -14,4 +14,4 @@ export class Home extends Component {
   }
 }
 
-export default Home
+export default Settings

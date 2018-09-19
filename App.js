@@ -3,7 +3,7 @@ import { AppState,Platform,StatusBar,StyleSheet, Text,View,Button } from 'react-
 import {AppNavigator} from './Screens/AppNavigator';
 import Network from './Managers/NetworkManager'
 import BarsManager from './Managers/BarsManager'
-
+import Colors from './Assets/UI Scripts/Colors'
 export default class App extends React.Component {    
 
 
