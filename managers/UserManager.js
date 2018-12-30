@@ -1,10 +1,28 @@
 import { Facebook } from 'expo';
 const NetworkManager = require('./NetworkManager')
+
 module.exports.Login = async (username, password) => {
 
+    let url = `${NetworkManager.domain}/Login`;
+    let body = {
+        username: username,
+        password: password
+    }
+
+    let response = await NetworkManager.JsonRequest('POST', body, url)
+        
+    if(response.success === undefined || response.success === null) //server said nonsense
+    {
+        throw "Invalid Server Response"
+    }
+    
+    if(response.success == false) //server says login failed
+    {
+        throw response.message
+    }
 }
 
-module.exports.FacebookLogin = async (callback) => {
+module.exports.FacebookLogin = async () => {
     try {
         const { type, token } = await Facebook.logInWithReadPermissionsAsync(
             '103834726804685', // Replace with your own app id in standalone app
@@ -34,29 +52,28 @@ module.exports.FacebookLogin = async (callback) => {
                         credentials: 'same-origin',
                         mode: 'same-origin',
                         body: JSON.stringify({
-                          id : id,
-                          email : email,
-                          name : name
+                            id: id,
+                            email: email,
+                            name: name
                         }),
                         headers: {
-                          'Accept':       'application/json',
-                          'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
                         }
-                      }
+                    }
 
-                      //creates or logs in for facebook user
-                      const response = await fetch(NetworkManager.domain + "/FacebookLogin", data)
-                      const outcome = await response.json()
+                    //creates or logs in for facebook user
+                    const response = await fetch(NetworkManager.domain + "/FacebookLogin", data)
+                    const outcome = await response.json()
 
-                      if (outcome.success)
-                      {
+                    if (outcome.success) {
 
                         return { success: true }
-                      }
-                      else
-                      {
-                        return { success: false, message : outcome.message }
-                      }
+                    }
+                    else {
+                        console.log(outcome.message)
+                        return { success: false, message: "Facebook Login Failed"}
+                    }
                 }
                 break;
             }

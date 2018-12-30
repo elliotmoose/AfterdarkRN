@@ -17,3 +17,29 @@ module.exports.GetDiscounts = function(callback){
         callback(responseJSON["output"]);
     })    
 }
+
+module.exports.JsonRequest = async function(method,body,url)
+{
+    //log in to server
+    let data = {
+        method: method,
+        credentials: 'same-origin',
+        mode: 'same-origin',
+        body: JSON.stringify(body),
+        headers: {
+          'Accept':       'application/json',
+          'Content-Type': 'application/json',
+        }
+    }
+
+    try
+    {
+        let response = await fetch(url,data);
+        let jsonResponse = await response.json();
+        return jsonResponse
+    }
+    catch(e)
+    {
+        throw "Please check your internet connection"
+    }    
+}

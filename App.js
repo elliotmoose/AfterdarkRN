@@ -3,7 +3,7 @@ import {AppState,Platform,StatusBar,StyleSheet, Text,View,Button,SafeAreaView } 
 import {Asset,Font} from 'expo'
 import {AppNavigator} from './navigation/AppNavigator';
 import Loading from './screens/Loading';
-import Login from './screens/Login';
+import LoginNavigator from './components/login/LoginNavigator';
 import Network from './managers/NetworkManager'
 import BarsManager from './managers/BarsManager'
 import Colors from './constants/Colors'
@@ -56,7 +56,7 @@ export default class App extends React.Component {
       {
         return (     
           <SafeAreaView style={{flex: 1, backgroundColor: '#000'}}>
-              <Login/>      
+              <LoginNavigator/>      
           </SafeAreaView>        
           );
       }
