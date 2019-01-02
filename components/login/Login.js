@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, Text, Image, ImageBackground, TextInput, Button, View, StyleSheet, TouchableHighlight } from 'react-native';
 import { Facebook } from 'expo';
-import { AjaxError } from 'rxjs';
+
 const UserManager = require('../../managers/UserManager');
 export default class FacebookLogin extends Component {
     static navigationOptions = {        
@@ -36,9 +36,15 @@ export default class FacebookLogin extends Component {
         let username = this.state.username
         let password = this.state.password
 
+        if (username == "" || password == "")
+        {
+            Alert.alert("Oops!", "Please fill up your username and password!")
+            return
+        }
+
         try {
             await UserManager.Login(username, password)
-            Alert.alert("Success!", "Logged In")
+            // Alert.alert("Success!", "Logged In")
         }
         catch (e) {
             Alert.alert("Failed!", `${e}`)
@@ -54,9 +60,9 @@ export default class FacebookLogin extends Component {
             <View style={styles.container}>
                 <View style={styles.imageContainer}>
                     <Image resizeMode='cover' source={require('../../assets/Images/Loading.jpg')} style={{ width: '100%', height: '100%' }} />
-                </View>;
-        
-        <Image resizemode='contain' source={require('../../assets/Images/AfterDark_logo_white_tagline.png')} style={{ width: '70%', height: 45, margin: 12, marginBottom: 32, resizeMode: 'contain' }} />
+                </View>
+
+                <Image resizemode='contain' source={require('../../assets/Images/AfterDark_logo_white_tagline.png')} style={{ width: '70%', height: 45, margin: 12, marginBottom: 32, resizeMode: 'contain' }} />
                 <TextInput placeholder='Username'
                     autoCapitalize='none'
                     style={styles.usernameField}

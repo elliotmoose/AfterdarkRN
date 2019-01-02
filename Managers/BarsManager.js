@@ -17,7 +17,6 @@ module.exports.OnDiscountsLoaded = function(discounts)
     }
 
     this.discounts = discounts;
-    console.log('loaded')
     EventRegister.emit('DISCOUNTS_LOADED',discounts)
 }
 

@@ -80,7 +80,7 @@ class BarListItem extends Component {
             <TouchableHighlight activeOpacity={0.5} underlayColor={Colors.white} style={styles.barListItemTouchable} onPress={() => this.props.onPress(this.props.bar)}>
                 <CachedImage
                     resizeMode='cover'
-                    {...{ uri: `${NetworkManager.domain}GetImageForBar/${this.props.bar.id}` }}
+                    {...{ uri: `${NetworkManager.domain}/GetImageForBar/${this.props.bar.id}` }}
                     style={styles.barListItemImage}
                 />                
             </TouchableHighlight>

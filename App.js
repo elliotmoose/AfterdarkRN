@@ -6,14 +6,17 @@ import Loading from './screens/Loading';
 import LoginNavigator from './components/login/LoginNavigator';
 import Network from './managers/NetworkManager'
 import BarsManager from './managers/BarsManager'
+import UserManager from './managers/UserManager'
 import Colors from './constants/Colors'
+import Checkout from './components/ticket/Checkout'
+import {EventRegister} from 'react-native-event-listeners';
 
 export default class App extends React.Component {    
   
   state = {
     startedLoad : false,
     isLoading : true,
-    isLoggedIn : false
+    isLoggedIn : UserManager.isLoggedIn,
   }
   
   componentDidMount() {
@@ -24,6 +27,15 @@ export default class App extends React.Component {
     Network.GetDiscounts(function(discounts){
       BarsManager.OnDiscountsLoaded(discounts);
     });    
+
+    UserManager.loginCallback = this.loginCallback.bind(this)
+  }
+  
+
+  loginCallback()
+  {
+    //updates login state
+    this.setState({isLoggedIn: UserManager.isLoggedIn})   
   }
 
   render() {    
@@ -47,17 +59,15 @@ export default class App extends React.Component {
       if(this.state.isLoggedIn)
       {
         return (     
-          <SafeAreaView style={{flex: 1, backgroundColor: '#000'}}>
-              <AppNavigator/>      
-          </SafeAreaView>        
+          <AppNavigator style={{backgroundColor : '#000'}}/>          
           );
       }
       else
       {
-        return (     
-          <SafeAreaView style={{flex: 1, backgroundColor: '#000'}}>
-              <LoginNavigator/>      
-          </SafeAreaView>        
+        return (  
+          // <View style={{backgroundColor : 'red'}}></View>   
+          // <LoginNavigator/> 
+          <Checkout/> 
           );
       }
       

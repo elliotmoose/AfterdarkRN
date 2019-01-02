@@ -36,8 +36,6 @@ export class BarDetail extends Component {
         EventRegister.addEventListener('DISCOUNTS_LOADED', (discounts) => {
             this.RefreshDiscountList(discounts);
         })
-
-
     }
 
     static navigationOptions = {        
@@ -85,7 +83,7 @@ export class BarDetail extends Component {
         return (
             <View style={style.container}>
                 <View style={style.imageContainer}>                
-                    <Image adjustsFontSizeToFit={true} style = {style.barImage} {...{uri: Network.domain +`GetImageForBar/${bar.id}`}} />
+                    <Image adjustsFontSizeToFit={true} style = {style.barImage} {...{uri: `${Network.domain}/GetImageForBar/${bar.id}`}} />
                     <Text style={style.barTitle} numberOfLines={2}>
                         {bar.name}
                     </Text>

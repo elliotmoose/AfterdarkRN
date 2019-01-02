@@ -1,6 +1,9 @@
 import { Facebook } from 'expo';
+
 const NetworkManager = require('./NetworkManager')
 
+module.exports.isLoggedIn = false
+module.exports.loginCallback = function(){}
 module.exports.Login = async (username, password) => {
 
     let url = `${NetworkManager.domain}/Login`;
@@ -10,16 +13,24 @@ module.exports.Login = async (username, password) => {
     }
 
     let response = await NetworkManager.JsonRequest('POST', body, url)
-        
-    if(response.success === undefined || response.success === null) //server said nonsense
+       
+    if(response.success == true) //success
+    {
+        module.exports.isLoggedIn = true
+        module.exports.loginCallback()
+    }
+    else if(response.success === undefined || response.success === null) //server said nonsense
     {
         throw "Invalid Server Response"
     }
-    
-    if(response.success == false) //server says login failed
+    else if(response.success == false) //server says login failed
     {
         throw response.message
     }
+    else
+    {
+        throw "Could not login at this time"
+    }    
 }
 
 module.exports.FacebookLogin = async () => {
@@ -67,11 +78,13 @@ module.exports.FacebookLogin = async () => {
                     const outcome = await response.json()
 
                     if (outcome.success) {
-
+                        module.exports.isLoggedIn = true
+                        module.exports.loginCallback()
+                        console.log('Facebook Login Success')
                         return { success: true }
                     }
                     else {
-                        console.log(outcome.message)
+                        console.log(outcome.message)                        
                         return { success: false, message: "Facebook Login Failed"}
                     }
                 }
