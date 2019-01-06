@@ -1,7 +1,7 @@
 import React from 'react';
 import {AppState,Platform,StatusBar,StyleSheet, Text,View,Button,SafeAreaView } from 'react-native';
 import {Asset,Font} from 'expo'
-import {AppNavigator} from './navigation/AppNavigator';
+import {AppNavigator} from './main/AppNavigator';
 import Loading from './screens/Loading';
 import LoginNavigator from './components/login/LoginNavigator';
 import Network from './managers/NetworkManager'
@@ -9,7 +9,9 @@ import BarsManager from './managers/BarsManager'
 import UserManager from './managers/UserManager'
 import Colors from './constants/Colors'
 import Checkout from './components/ticket/Checkout'
+import AddPaymentMethod from './components/ticket/AddPaymentMethod';
 import {EventRegister} from 'react-native-event-listeners';
+import Signup from './components/login/Signup';
 
 export default class App extends React.Component {    
   
@@ -17,6 +19,7 @@ export default class App extends React.Component {
     startedLoad : false,
     isLoading : true,
     isLoggedIn : UserManager.isLoggedIn,
+    isUser : UserManager.isUser
   }
   
   componentDidMount() {
@@ -35,7 +38,7 @@ export default class App extends React.Component {
   loginCallback()
   {
     //updates login state
-    this.setState({isLoggedIn: UserManager.isLoggedIn})   
+    this.setState({isLoggedIn: UserManager.isLoggedIn, isUser : UserManager.isUser})   
   }
 
   render() {    
@@ -58,16 +61,27 @@ export default class App extends React.Component {
     {      
       if(this.state.isLoggedIn)
       {
-        return (     
-          <AppNavigator style={{backgroundColor : '#000'}}/>          
-          );
+        if(this.state.isUser)
+        {
+          return (     
+            <AppNavigator style={{backgroundColor : 'black'}}/>          
+            );
+        }
+        else
+        {
+          return (     
+            <AppNavigator style={{backgroundColor : '#000'}}/>          
+            );
+        }        
       }
       else
       {
         return (  
           // <View style={{backgroundColor : 'red'}}></View>   
-          // <LoginNavigator/> 
-          <Checkout/> 
+          <LoginNavigator/> 
+          // <Signup></Signup>
+          // <Checkout/> 
+          // <AddPaymentMethod/>
           );
       }
       

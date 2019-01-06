@@ -10,7 +10,6 @@ module.exports.OnBarsLoaded = function(bars){
 
 module.exports.OnDiscountsLoaded = function(discounts)
 {
-
     for(var index in discounts)
     {        
         discounts[index].image = Images.images[index%12];
@@ -22,3 +21,15 @@ module.exports.OnDiscountsLoaded = function(discounts)
 
 module.exports.bars = bars;
 module.exports.discounts = discounts;
+
+module.exports.barWithID = (id)=>{
+    for(var bar of module.exports.bars)
+    {
+        if(bar.id == id)
+        {
+            return bar
+        }
+    }
+
+    return null
+}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, Text, Image, ImageBackground, TextInput, Button, View, StyleSheet, TouchableHighlight } from 'react-native';
 import { Facebook } from 'expo';
-
+import Colors from '../../constants/Colors'
 const UserManager = require('../../managers/UserManager');
 export default class FacebookLogin extends Component {
     static navigationOptions = {        
@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 8,
         backgroundColor: '#3b984c',
+        // backgroundColor: Colors.themeLight,
     },
     signUpButton: {
         width: '70%',
@@ -141,7 +142,8 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     signUpButton: {
-        backgroundColor: '#3b5998'
+        // backgroundColor: '#3b5998'
+        backgroundColor: Colors.themeLight
     },
     fbLoginButton: {
         backgroundColor: '#3b5998',

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Button } from 'react-native';
-// var stripe = require('stripe-client')('pk_test_kU9EUtqBnkm5dsjqrphsjzRa');
+var stripe = require('stripe-client')('pk_test_kU9EUtqBnkm5dsjqrphsjzRa');
+// import {PaymentsStripe as Stripe} from 'expo-payments-stripe'
 
-import { PaymentsStripe as Stripe} from 'expo-payments-stripe'
 // 'pk_live_qhATGjhaSUCT3PYUefZEHb8w'
 
 var information = {

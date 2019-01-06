@@ -1,7 +1,8 @@
 import { Facebook } from 'expo';
+const bcrypt = require('react-native-bcrypt')
+const NetworkManager = require('./NetworkManager');
 
-const NetworkManager = require('./NetworkManager')
-
+module.exports.isUser = true
 module.exports.isLoggedIn = false
 module.exports.loginCallback = function(){}
 module.exports.Login = async (username, password) => {
@@ -104,3 +105,64 @@ module.exports.FacebookLogin = async () => {
     return { success: false }
 }
 
+module.exports.loadStripeUser = function()
+{
+
+}
+
+module.exports.register = async (username,password,email,gender,age) =>
+{
+    console.log('registering...')
+    let url = `${NetworkManager.domain}/Register`;
+    let body = {
+        username: username,
+        password: password,
+        email : email
+    }
+
+    if(gender == "male" || "female")
+    {
+        body['gender'] = gender
+    }
+
+    if(age !== undefined && age != null && age > 0 && age < 100)
+    {
+        body['age'] = age
+    }    
+
+    let hashedPassword = await hashPassword(password)
+    return
+    let response = await NetworkManager.JsonRequest('POST', body, url)    
+       
+    if(response.success == true) //success
+    {
+        module.exports.isLoggedIn = true
+        module.exports.loginCallback()
+    }
+    else if(response.success === undefined || response.success === null) //server said nonsense
+    {
+        throw "Invalid Server Response"
+    }
+    else if(response.success == false) //server says login failed
+    {
+        throw response.message
+    }
+    else
+    {
+        throw "Could not login at this time"
+    }    
+}
+
+
+var hashPassword = async function(password) {
+    const saltRounds = 10;
+  
+    const hashedPassword = await new Promise((resolve, reject) => {
+      bcrypt.hash(password, saltRounds, function(err, hash) {
+        if (err) reject(err)
+        resolve(hash)
+      });
+    })
+  
+    return hashedPassword
+}

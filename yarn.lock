@@ -5084,6 +5084,11 @@ lodash-es@^4.2.1:
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.11.tgz#145ab4a7ac5c5e52a3531fb4f310255a152b4be0"
   integrity sha512-DHb1ub+rMjjrxqlB3H56/6MXtm1lSksDp2rA2cNWjG8mlDUYFhUj3Di2Zn5IwSU87xLv8tNIQ7sSwE/YOX/D/Q==
 
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
+
 lodash.map@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.map/-/lodash.map-4.6.0.tgz#771ec7839e3473d9c4cde28b19394c3562f4f6d3"
@@ -5134,7 +5139,7 @@ lodash@4.16.2:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.16.2.tgz#3e626db827048a699281a8a125226326cfc0e652"
   integrity sha1-PmJtuCcEimmSgaihJSJjJs/A5lI=
 
-lodash@4.x, lodash@4.x.x, lodash@^4.0.0, lodash@^4.13.1, lodash@^4.14.1, lodash@^4.16.6, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
+lodash@4.x, lodash@4.x.x, lodash@^4.0.0, lodash@^4.13.1, lodash@^4.14.1, lodash@^4.14.2, lodash@^4.16.6, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -6184,6 +6189,13 @@ path-type@^2.0.0:
   dependencies:
     pify "^2.0.0"
 
+payment@^2.2.1:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/payment/-/payment-2.3.0.tgz#b2a95e9c3052459647da3926b8b66c553d93098f"
+  integrity sha1-sqlenDBSRZZH2jkmuLZsVT2TCY8=
+  dependencies:
+    qj "~2.0.0"
+
 pegjs@^0.10.0:
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/pegjs/-/pegjs-0.10.0.tgz#cf8bafae6eddff4b5a7efb185269eaaf4610ddbd"
@@ -6434,6 +6446,11 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
+qj@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/qj/-/qj-2.0.0.tgz#054dd3b75ce018728d23a0605f030dfda0bd158a"
+  integrity sha1-BU3Tt1zgGHKNI6BgXwMN/aC9FYo=
+
 qrcode-terminal@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/qrcode-terminal/-/qrcode-terminal-0.11.0.tgz#ffc6c28a2fc0bfb47052b47e23f4f446a5fbdb9e"
@@ -6563,10 +6580,48 @@ react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.0, react-lifecycles-com
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
+react-native-animatable@^1.2.4:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.3.1.tgz#f004a7e9de6838d0fbf210d642593cff7affd9ef"
+  integrity sha512-NoE6OAgCrhggWBRV6rBJup5vLAGoTjx168Tku1RZmjUGIdYRAyGesP/MoqvxiNJjhTAgwYx2LT63VTT1xO8g4Q==
+  dependencies:
+    prop-types "^15.5.10"
+
+react-native-awesome-card-io@0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/react-native-awesome-card-io/-/react-native-awesome-card-io-0.7.0.tgz#102a068491fac055345d7dea89ae83584487825b"
+  integrity sha512-Di/v5xr81TVOQIkcstGx74ECTI9Cn6kYBbnxhBzoWZw0lFZuPezBcqYz3RDoac0yU9MbiNEw1u3GhVCVvi8Q4A==
+  dependencies:
+    prop-types "^15.5.10"
+
+react-native-awesome-card-io@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/react-native-awesome-card-io/-/react-native-awesome-card-io-0.8.1.tgz#99a49f6929ea2e89ab45afa13893ba46391163ce"
+  integrity sha512-CJwiBzhjKxbPEjmK6JR7al8E+Er0FUcGclpkMbQjhbzlWg9T1SFrNGw7BxsjmVnNSl7ePwBcrpIu6s5kskjdeQ==
+  dependencies:
+    prop-types "^15.6.2"
+
+react-native-bcrypt@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-bcrypt/-/react-native-bcrypt-2.4.0.tgz#95dff2dbc849c22b25f0b9379ab7bfebd2140bfd"
+  integrity sha1-ld/y28hJwisl8Lk3mre/69IUC/0=
+
 react-native-branch@2.0.0-beta.3:
   version "2.0.0-beta.3"
   resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.0.0-beta.3.tgz#2167af86bbc9f964bd45bd5f37684e5b54965e32"
   integrity sha1-IWevhrvJ+WS9Rb1fN2hOW1SWXjI=
+
+react-native-checkout@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-checkout/-/react-native-checkout-0.0.8.tgz#6fc019de4777aab4e82b29561dfa49cea5156e3a"
+  integrity sha512-mNUC5IN9wMJTqv10fHkalUmKGc0023jeWj2MCg9hvKw95GWA0+Wbqjykp49Pb9pQ/JLMl8GPivHleWSUH4dEgg==
+  dependencies:
+    lodash "^4.14.2"
+    payment "^2.2.1"
+    prop-types "^15.6.0"
+    react-native-awesome-card-io "0.7.0"
+    react-native-keyboard-spacer "^0.4.1"
+    string "^3.3.3"
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
@@ -6627,6 +6682,11 @@ react-native-gesture-handler@1.0.0-alpha.41:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
+react-native-keyboard-spacer@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-spacer/-/react-native-keyboard-spacer-0.4.1.tgz#46f18a320432098a25ea9fa89f5143dd254d332d"
+  integrity sha1-RvGKMgQyCYol6p+on1FD3SVNMy0=
+
 react-native-maps@0.21.0:
   version "0.21.0"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.21.0.tgz#005f58e93d7623ad59667e8002101970ddf235c2"
@@ -6635,12 +6695,27 @@ react-native-maps@0.21.0:
     babel-plugin-module-resolver "^2.3.0"
     babel-preset-react-native "1.9.0"
 
+react-native-modal@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-7.0.2.tgz#6048217807e03cd585204dace2e1ca1726c0b647"
+  integrity sha512-IRTDeErr4asDdPs4DGbaKvz3fgr56tcVA7nAdCLu4IkjNw7DaIlAbQelg0Sdirb+8+RbIDPyrrnuEH84Fnj4ZA==
+  dependencies:
+    prop-types "^15.6.1"
+    react-native-animatable "^1.2.4"
+
 react-native-navigation@^1.1.486:
   version "1.1.493"
   resolved "https://registry.yarnpkg.com/react-native-navigation/-/react-native-navigation-1.1.493.tgz#01d57dd9822ac603cd04d4529abacf193bbbcdac"
   integrity sha512-CbzeU4ET+/lSMCqrgHXbetv8xhvrUJ15qFr8LkfXfmXpcaCAhOyfJlqpKmVkhHUrPwlWVXAC+ndD0miPTEKF5Q==
   dependencies:
     lodash "4.x.x"
+
+react-native-picker-select@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-picker-select/-/react-native-picker-select-5.2.0.tgz#6968a0e5ad51601e7001056f28c70e0fe9ee1f1c"
+  integrity sha512-IDvfXgU0QCHn0Y4rWqs9E86HKnfmDukl1Y7PSg5yuItboVPF/CeczYr5iAFo+OnEU7QuVbzS9jlv+bj81bArYw==
+  dependencies:
+    lodash.isequal "^4.5.0"
 
 react-native-safe-area-view@0.11.0:
   version "0.11.0"
@@ -7766,6 +7841,11 @@ string-width@^1.0.1:
   dependencies:
     is-fullwidth-code-point "^2.0.0"
     strip-ansi "^4.0.0"
+
+string@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/string/-/string-3.3.3.tgz#5ea211cd92d228e184294990a6cc97b366a77cb0"
+  integrity sha1-XqIRzZLSKOGEKUmQpsyXs2anfLA=
 
 string_decoder@~0.10.x:
   version "0.10.31"

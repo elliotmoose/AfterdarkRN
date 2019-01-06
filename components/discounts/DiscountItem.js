@@ -13,7 +13,7 @@ export default class DiscountItem extends Component
     render()
     {        
         return <View style={[this.props.style,styles.container]}>
-            <TouchableOpacity onPress={this.props.onPress(this.props.discount)}>
+            <TouchableOpacity onPress={this.props.onPress}>
                 <ImageBackground style={styles.discountImage} source={this.props.discount.image}>
                     <View style={styles.blackTint}>
                         <Text style={styles.discountAvailability}>

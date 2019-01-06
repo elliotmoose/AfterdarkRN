@@ -13,4 +13,4 @@ export const HomeNavigator = createStackNavigator({
   }
 })
 
-export default HomeNavigator
+export default HomeNavigator 

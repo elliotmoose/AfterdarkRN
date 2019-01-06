@@ -42,6 +42,6 @@ export var AppNavigator = createBottomTabNavigator({
         activeBackgroundColor : Colors.themeLight,
         activeTintColor : Colors.black,
         inactiveBackgroundColor : Colors.black,
-        inactiveTintColor : Colors.themeLight        
+        inactiveTintColor : Colors.themeLight,    
       }
   })

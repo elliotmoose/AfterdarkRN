@@ -24,12 +24,12 @@ export class BarDetail extends Component {
     constructor(props){
         super(props)
             
-        this.DisplayDetailViewWithDiscount.bind(this)
         
+        this.DisplayDetailViewWithDiscount = this.DisplayDetailViewWithDiscount.bind(this)
     }
 
     componentDidMount()
-    {
+    {        
         this.RefreshDiscountList(BarsManager.discounts)
 
         //subscribe to discount load event
@@ -72,7 +72,7 @@ export class BarDetail extends Component {
 
     DisplayDetailViewWithDiscount(discount)
     {
-        // this.props.navigation.navigate('discountDetail',{discount: discount})        
+        this.props.navigation.navigate('discountsDetail',{discount: discount})        
     }
 
     render() {
@@ -137,7 +137,7 @@ export class BarDetail extends Component {
                                         {
                                             const margin = 5
                                             const discountItemwidth = windowWidth/2-margin*3
-                                            return (<DiscountItem discount={item} onPress={()=>this.DisplayDetailViewWithDiscount} style={{width : discountItemwidth,height: discountItemwidth*1.2, margin : margin}}/>)
+                                            return (<DiscountItem discount={item} onPress={()=>{this.DisplayDetailViewWithDiscount(item)}} style={{width : discountItemwidth,height: discountItemwidth*1.2, margin : margin}}/>)
                                         }
                                     }}
                                     keyExtractor={(item) => item.name}
