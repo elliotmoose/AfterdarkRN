@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
-import {TouchableOpacity, Text, TextInput , View, StyleSheet, Button,Alert } from 'react-native'
+import {TouchableOpacity, Text, TextInput , View, StyleSheet, Button,Alert, ActivityIndicator, Keyboard } from 'react-native'
 const InputAccessoryView = require('InputAccessoryView')
 
 import Colors from '../../constants/Colors'
 import KeyboardShiftView from '../reusable/KeyboardShiftView';
 import Picker from 'react-native-picker-select'
+import Modal from 'react-native-modal';
 
 const UserManager = require('../../managers/UserManager');
 export default class Signup extends Component
 {
-    static navigationOptions = ({navigation})=>({
-        headerStyle: {
-            backgroundColor: Colors.black
-        },
-        headerTintColor: Colors.themeLight,
+    static navigationOptions = ({navigation})=>({        
         headerRight : (<TouchableOpacity style={{marginRight : 16}} onPress={navigation.getParam('signUp')}>
             <Text style={{color : Colors.themeLight, fontFamily : 'avenir-bold',fontSize : 15}}>Sign Up</Text>
         </TouchableOpacity>)      
@@ -34,10 +31,13 @@ export default class Signup extends Component
                 color: 'black'
             }
         ],
-        username : 'asd',
-        password : 'asd',
-        confirmPassword : 'asd',
-        email : '@.'
+        username : 'elliotmoose',
+        password : 'S9728155f',
+        confirmPassword : 'S9728155f',
+        email : 'kyzelliots@gmail.com',
+        age: 21,
+        gender : 'male',
+        isSigningUp : false
     }
 
     
@@ -47,45 +47,34 @@ export default class Signup extends Component
         this.props.navigation.setParams({ signUp: this.signUp.bind(this)});
 
         this.signUp = this.signUp.bind(this)
-        this.isFieldEmpty = this.isFieldEmpty.bind(this)
     }
     
     async signUp()
     {
-        if(this.isFieldEmpty('username') || this.isFieldEmpty('email') || this.isFieldEmpty('password') || this.isFieldEmpty('confirmPassword'))
+        try 
         {
-            Alert.alert('Oops!','Please fill in the mandatory fields')
+            let validRegisterData = UserManager.validRegister(this.state.username,this.state.password,this.state.confirmPassword,this.state.email,this.state.gender,this.state.age)            
+            
+            if(validRegisterData == true)
+            {
+                Keyboard.dismiss();
+                this.setState({isSigningUp : true});
+                await UserManager.register(this.state.username,this.state.password,this.state.email,this.state.gender,this.state.age);
+            }                
+
+            this.setState({isSigningUp : false})
         }
-        else if(!this.isValidEmail(this.state.email))
+        catch(e)
         {
-            Alert.alert('Oops!','Please give a valid email')
+            // 
+            Alert.alert('Error:',`Sign up failed: ${e}`,[{text: 'Ok', onPress: ()=>{this.setState({isSigningUp : false})}}]);
         }
-        else
-        {         
-            await UserManager.register(this.state.username,this.state.password,this.state.email,this.state.gender,this.state.age)            
-        }        
+        
+        
     }
 
-    isFieldEmpty(field)
-    {
-        if (this.state[field] === undefined || this.state[field] == null || this.state[field] == "")
-        {
-            console.log(field + 'is not filled')
-            return true
-        }
 
-        return false
-    }
-
-    isValidEmail(email)
-    {
-        if(!email.includes('@') || !email.includes('.'))
-        {
-            return false
-        }
-
-        return true
-    }
+    
     render()
     {
         const inputAccessoryViewID = 'inputAccessoryView1';
@@ -93,25 +82,43 @@ export default class Signup extends Component
         return (
 
         <View style={styles.container}>
-            {/* <KeyboardShiftView > */}
-                <TextInput autoCapitalize='none' style={[styles.textField,{marginTop : 32}]} placeholder='Username' onChangeText={(value)=>{this.setState({username : value})}}></TextInput>
-                <TextInput autoCapitalize='none' style={styles.textField} placeholder='Email' onChangeText={(value)=>{this.setState({email : value})}}></TextInput>
-                <TextInput style={styles.textField} placeholder='Password' secureTextEntry={true} onChangeText={(value)=>{this.setState({password : value})}}></TextInput>
-                <TextInput style={styles.textField} placeholder='Confirm Password' secureTextEntry={true} onChangeText={(value)=>{this.setState({confirmPassword : value})}}></TextInput>
-                <TextInput style={styles.textField} keyboardType = 'numeric' placeholder='Age' onChangeText={(value)=>{this.setState({age : value})}}></TextInput>
+            <KeyboardShiftView >
+                <TextInput autoCapitalize='none' style={[styles.textField,{marginTop : 32}]} placeholder='Username' 
+                    onChangeText={(value)=>{this.setState({username : value})}}
+                    value={this.state.username}
+                ></TextInput>
+                <TextInput autoCapitalize='none' style={styles.textField} placeholder='Email' 
+                    onChangeText={(value)=>{this.setState({email : value})}}
+                    value={this.state.email}
+                ></TextInput>
+                <TextInput style={styles.textField} placeholder='Password' secureTextEntry={true} 
+                    onChangeText={(value)=>{this.setState({password : value})}}
+                    value={this.state.password}
+                ></TextInput>
+                <TextInput style={styles.textField} placeholder='Confirm Password' secureTextEntry={true} 
+                    onChangeText={(value)=>{this.setState({confirmPassword : value})}}
+                    value={this.state.confirmPassword}
+                ></TextInput>
+                <TextInput style={styles.textField} keyboardType = 'numeric' placeholder='Age' 
+                    onChangeText={(value)=>{this.setState({age : value})}}
+                    value={`${this.state.age}`}
+                ></TextInput>
 
                 <View style={{width:'70%',height:40, flexDirection:'row', marginTop: 10}}>
                     <Text style={{flex : 1,color:'white',lineHeight: 40}}>
                         Gender:
                     </Text>
                     <View style={{flex : 3}}>
-                        <Picker style={{...pickerStyle}} items={this.state.genderOptions} selectedValue="Male" onValueChange={(value)=>{console.log(value)}}></Picker>
+                        <Picker style={{...pickerStyle}} value={this.state.gender} items={this.state.genderOptions} selectedValue="Male" onValueChange={(value,index)=>{this.setState({gender : value})}}></Picker>
                     </View>                
 
                 </View>
                 
-            {/* </KeyboardShiftView> */}
+            </KeyboardShiftView>
 
+            <Modal isVisible={this.state.isSigningUp} style={{justifyContent : 'center',alignItems : 'center'}}>
+                <ActivityIndicator style={{width : 40,height : 40}}></ActivityIndicator>
+            </Modal>
             {/* <InputAccessoryView nativeID={inputAccessoryViewID} style={{width : '100%'}}>
                 <View style={{backgroundColor: 'white', width : '100%'}}>
                 <Button

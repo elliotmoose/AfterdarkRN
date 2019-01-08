@@ -9,14 +9,14 @@ module.exports.domain = domain;
 module.exports.GetBars = function(callback){
     console.log("Getting bars..");
     fetch(domain + "/GetBarNames").then((response)=>response.json()).then((responseJSON) => {
-        callback(responseJSON.message);
+        callback(responseJSON.output);
     })    
 }
 
 module.exports.GetDiscounts = function(callback){
     console.log("Getting discounts..");
     fetch(domain + "/GetDiscounts").then((response)=>response.json()).then((responseJSON) => {
-        callback(responseJSON.message);
+        callback(responseJSON.output);
     })    
 }
 

@@ -22,16 +22,22 @@ export default class App extends React.Component {
     isUser : UserManager.isUser
   }
   
+  componentWillMount(){
+      Network.GetBars(function(bars){
+        BarsManager.OnBarsLoaded(bars);
+      });    
+
+      Network.GetDiscounts(function(discounts){
+        BarsManager.OnDiscountsLoaded(discounts);
+      });    
+
+      UserManager.loginCallback = this.loginCallback.bind(this);
+      UserManager.load();
+      // UserManager.logout(); 
+  }
+
   componentDidMount() {
-    Network.GetBars(function(bars){
-      BarsManager.OnBarsLoaded(bars);
-    });    
-
-    Network.GetDiscounts(function(discounts){
-      BarsManager.OnDiscountsLoaded(discounts);
-    });    
-
-    UserManager.loginCallback = this.loginCallback.bind(this)
+      
   }
   
 

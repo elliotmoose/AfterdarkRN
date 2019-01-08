@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
-        backgroundColor: '#3b984c',
-        // backgroundColor: Colors.themeLight,
+        // backgroundColor: '#3b984c',
+        backgroundColor: Colors.themeLighter,
     },
     signUpButton: {
         width: '70%',
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     },
     signUpButton: {
         // backgroundColor: '#3b5998'
-        backgroundColor: Colors.themeLight
+        backgroundColor: Colors.grey
     },
     fbLoginButton: {
         backgroundColor: '#3b5998',

@@ -1,10 +1,38 @@
 import { Facebook } from 'expo';
+import {AsyncStorage} from 'react-native'
 const bcrypt = require('react-native-bcrypt')
 const NetworkManager = require('./NetworkManager');
 
 module.exports.isUser = true
 module.exports.isLoggedIn = false
 module.exports.loginCallback = function(){}
+module.exports.userData = null
+
+module.exports.load = async () => {
+    try {
+        const userDataJSON = await AsyncStorage.getItem('USER_DATA');
+        const savedUserData = JSON.parse(userDataJSON);
+        if (savedUserData !== null) {
+            _setLoggedIn(savedUserData)
+        }
+        else
+        {
+            console.log('USER NOT LOGGED IN: KICK TO LOG IN')
+        }
+    } 
+    catch (error) {
+        console.log(error)
+    }
+}
+
+module.exports.save = async () => {
+    try {
+        await AsyncStorage.setItem('USER_DATA', JSON.stringify(module.exports.userData));          
+      } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports.Login = async (username, password) => {
 
     let url = `${NetworkManager.domain}/Login`;
@@ -17,8 +45,7 @@ module.exports.Login = async (username, password) => {
        
     if(response.success == true) //success
     {
-        module.exports.isLoggedIn = true
-        module.exports.loginCallback()
+        _setLoggedIn(response.output)
     }
     else if(response.success === undefined || response.success === null) //server said nonsense
     {
@@ -26,12 +53,16 @@ module.exports.Login = async (username, password) => {
     }
     else if(response.success == false) //server says login failed
     {
-        throw response.message
+        throw response.output
     }
     else
     {
         throw "Could not login at this time"
     }    
+}
+
+module.exports.logout = ()=>{
+    _setLoggedOut();
 }
 
 module.exports.FacebookLogin = async () => {
@@ -79,14 +110,13 @@ module.exports.FacebookLogin = async () => {
                     const outcome = await response.json()
 
                     if (outcome.success) {
-                        module.exports.isLoggedIn = true
-                        module.exports.loginCallback()
+                        _setLoggedIn(outcome.output)
                         console.log('Facebook Login Success')
                         return { success: true }
                     }
                     else {
-                        console.log(outcome.message)                        
-                        return { success: false, message: "Facebook Login Failed"}
+                        console.log(outcome.output)                        
+                        return { success: false, message: outcome.output}
                     }
                 }
                 break;
@@ -110,13 +140,62 @@ module.exports.loadStripeUser = function()
 
 }
 
+module.exports.validRegister = (username,password,confirmPassword,email,gender,age) => {
+
+    if(isFieldEmpty(username) || isFieldEmpty(email) || isFieldEmpty(password) || isFieldEmpty(confirmPassword))
+    {
+        throw "Please fill in compulsory fields: username, password, confirm password, email";
+    }
+
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(String(email).toLowerCase()))
+    {
+        throw "Please provide a valid email";
+    }
+
+    re = /^\w+$/;
+    if(!re.test(username)) {
+      throw "Username must contain only letters, numbers and underscores!";
+    }
+
+    if(confirmPassword != password)
+    {
+        throw 'Passwords do not match'
+    }
+
+    //allows letters, numbers, !@#$%^&*()_+
+    if (password.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+]/) != -1) {
+        throw 'Invalid password: invalid characters'
+    }
+
+    if (password.length < 6)
+    {
+        throw 'Invalid password: too short'
+    }
+
+    if (password.length > 20)
+    {
+        throw 'Invalid password: too long'
+    }
+
+    if(age !== undefined && age != null && !isNaN(age))
+    {
+        if (!(age > 0 && age < 100))
+        {
+            throw 'Please provide a valid age'
+        }
+    }   
+    
+    return true
+}
+
 module.exports.register = async (username,password,email,gender,age) =>
 {
-    console.log('registering...')
-    let url = `${NetworkManager.domain}/Register`;
+    let hashedPassword = await hashPassword(password);
+
     let body = {
         username: username,
-        password: password,
+        password: hashedPassword,
         email : email
     }
 
@@ -124,20 +203,24 @@ module.exports.register = async (username,password,email,gender,age) =>
     {
         body['gender'] = gender
     }
-
-    if(age !== undefined && age != null && age > 0 && age < 100)
+    
+    if(age !== undefined && age != null && !isNaN(age))
     {
-        body['age'] = age
-    }    
+        if(age > 0 && age < 100)
+        {
+            
+            body['age'] = age
+        }
+    } 
 
-    let hashedPassword = await hashPassword(password)
-    return
+
+    let url = `${NetworkManager.domain}/Register`;
     let response = await NetworkManager.JsonRequest('POST', body, url)    
        
     if(response.success == true) //success
     {
-        module.exports.isLoggedIn = true
-        module.exports.loginCallback()
+        console.log('register success')
+        _setLoggedIn(response.output)
     }
     else if(response.success === undefined || response.success === null) //server said nonsense
     {
@@ -145,7 +228,8 @@ module.exports.register = async (username,password,email,gender,age) =>
     }
     else if(response.success == false) //server says login failed
     {
-        throw response.message
+        // console.log(response)
+        throw response.output
     }
     else
     {
@@ -165,4 +249,32 @@ var hashPassword = async function(password) {
     })
   
     return hashedPassword
+}
+
+var isFieldEmpty = function(field)
+{
+    if (field === undefined || field == null || field == "")
+    {
+        return true
+    }
+
+    return false
+}
+
+var _setLoggedIn = async function(userData)
+{
+    console.log('Setting Logged In: ' + JSON.stringify(userData))
+    module.exports.userData = userData
+    await module.exports.save()
+    module.exports.isLoggedIn = true
+    module.exports.loginCallback()
+}
+
+var _setLoggedOut = async function()
+{
+    console.log('Logging Out...')
+    module.exports.userData = null
+    await module.exports.save()
+    module.exports.isLoggedIn = false
+    module.exports.loginCallback()
 }
