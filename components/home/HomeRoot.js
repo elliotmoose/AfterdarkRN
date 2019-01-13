@@ -3,7 +3,7 @@ import { Image, View, Text, StyleSheet, Button, FlatList, TouchableHighlight } f
 
 import {Image as CachedImage,CacheManager} from 'react-native-expo-image-cache';
 import Colors from '../../constants/Colors';
-import BarsManager from '../../managers/BarsManager'
+import MerchantsManager from '../../managers/MerchantsManager'
 import NetworkManager from '../../managers/NetworkManager'
 import { EventRegister } from 'react-native-event-listeners'
 
@@ -26,29 +26,32 @@ export class HomeRoot extends Component {
     constructor(props) {
         super(props);
 
-        this.RefreshBarList = this.RefreshBarList.bind(this);
-        this.DisplayDetailViewWithBar = this.DisplayDetailViewWithBar.bind(this)
+        CacheManager.clearCache();
+
+        this.RefreshMerchantList = this.RefreshMerchantList.bind(this);
+        this.DisplayDetailViewWithMerchant = this.DisplayDetailViewWithMerchant.bind(this)
         this.state = {
             refresh: true
         }
 
-        //subscribe to bar load event
-        EventRegister.addEventListener('BARS_LOADED', (bars) => {
-            this.RefreshBarList(bars);
+        //subscribe to merchant load event
+        EventRegister.addEventListener('MERCHANTS_LOADED', (merchants) => {
+            this.RefreshMerchantList(merchants);
         })
     }
 
+
     componentDidMount()
     {
-        this.RefreshBarList(BarsManager.bars)
+        this.RefreshMerchantList(MerchantsManager.merchants)
     }
 
-    DisplayDetailViewWithBar(bar){        
-        this.props.navigation.navigate('barDetail',{bar: bar})
+    DisplayDetailViewWithMerchant(merchant){        
+        this.props.navigation.navigate('merchantDetail',{merchant: merchant})
     }
-    RefreshBarList(bars) {                
+    RefreshMerchantList(merchants) {                
         this.setState({
-            bars : bars,
+            merchants : merchants,
             refresh: !this.state.refresh
         })
     }
@@ -57,9 +60,9 @@ export class HomeRoot extends Component {
         return (
             <View style={{ backgroundColor: Colors.black, flex: 1 }}>
                 <FlatList
-                    data={this.state.bars}
+                    data={this.state.merchants}
                     extraData={this.state.refresh}
-                    renderItem={({ item }) => <BarListItem bar={item} onPress={this.DisplayDetailViewWithBar} />}
+                    renderItem={({ item }) => <MerchantListItem merchant={item} onPress={this.DisplayDetailViewWithMerchant} />}
                     keyExtractor={(item) => item.name}
                 />
             </View>
@@ -69,32 +72,35 @@ export class HomeRoot extends Component {
 
 export default HomeRoot
 
-class BarListItem extends Component {
+class MerchantListItem extends Component {
 
     constructor(props) {
         super(props);        
     }
 
-    render() {
-        return <View style={styles.barListItemContainerView}>
-            <TouchableHighlight activeOpacity={0.5} underlayColor={Colors.white} style={styles.barListItemTouchable} onPress={() => this.props.onPress(this.props.bar)}>
+    render() {        
+        return <View style={styles.merchantListItemContainerView}>
+            <TouchableHighlight activeOpacity={0.5} underlayColor={Colors.white} style={styles.merchantListItemTouchable} onPress={() => this.props.onPress(this.props.merchant)}>
                 <CachedImage
                     resizeMode='cover'
-                    {...{ uri: `${NetworkManager.domain}/GetImageForBar/${this.props.bar.id}` }}
-                    style={styles.barListItemImage}
+                    {...{ 
+                        uri: `${NetworkManager.domain}/GetImageForMerchant/${this.props.merchant.id}` ,
+                        cache : 'reload'
+                    }}
+                    style={styles.merchantListItemImage}
                 />                
             </TouchableHighlight>
 
             <View pointerEvents="none" style={styles.textContainer}>
-                <Text style={styles.barListItemText}>
-                    {this.props.bar.name}
+                <Text style={styles.merchantListItemText}>
+                    {this.props.merchant.name}
                 </Text>
 
-                <Text style={styles.barListItemSubText}>
-                    {this.props.bar.address_summary}
+                <Text style={styles.merchantListItemSubText}>
+                    {this.props.merchant.address_summary}
                 </Text>
-                <Text style={styles.barListItemSubText}>
-                    {this.props.bar.price}
+                <Text style={styles.merchantListItemSubText}>
+                    {this.props.merchant.price}
                 </Text>
             </View>            
 
@@ -104,12 +110,12 @@ class BarListItem extends Component {
 }
 
 const styles = StyleSheet.create({
-    barListItemContainerView: {        
+    merchantListItemContainerView: {        
         height: 200,
         flex : 1,
         justifyContent: 'center',                
     },
-    barListItemTouchable: {
+    merchantListItemTouchable: {
         flex: 1,
         margin : 0    
     },
@@ -121,7 +127,7 @@ const styles = StyleSheet.create({
         height : '70%',
         width : '100%'
     },
-    barListItemText: {        
+    merchantListItemText: {        
         // position : 'absolute',     
         top : 22, 
         color: Colors.white,
@@ -130,7 +136,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         fontFamily: 'avenir-bold'
     },
-    barListItemSubText : {        
+    merchantListItemSubText : {        
         bottom: -20,
         color: Colors.white,
         fontSize: 15,
@@ -138,7 +144,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         fontFamily: 'avenir'
     },
-    barListItemImage: {
+    merchantListItemImage: {
         flex: 1,
         left: 0,
         top: 0,

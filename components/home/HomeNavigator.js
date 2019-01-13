@@ -2,21 +2,29 @@ import React, { Component } from 'react';
 import {Image, View, Text,Button} from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import HomeRoot from './HomeRoot';
-import BarDetail from './BarDetail';
+import MerchantDetail from './MerchantDetail';
 import DiscountDetail from '../discounts/DiscountDetail'
+import EventsDetail from '../events/EventDetail'
 import Colors from '../../constants/Colors'
-
-import { PurchaseNavigator } from '../discounts/PurchaseNavigator';
 
 export const HomeNavigator = createStackNavigator({
   root : {
     screen : HomeRoot
   },
-  barDetail : {
-    screen : BarDetail
+  merchantDetail : {
+    screen : MerchantDetail
   },
   discountsDetail : {
-    screen : PurchaseNavigator,
+    screen : DiscountDetail,
+    navigationOptions : {
+      headerStyle: {
+        backgroundColor: 'black'
+      },
+      headerTintColor: Colors.themeLight     
+    }
+  },
+  eventsDetail : {
+    screen : EventsDetail,
     navigationOptions : {
       headerStyle: {
         backgroundColor: 'black'

@@ -3,7 +3,7 @@ import {Dimensions,Text,ImageBackground,TouchableOpacity,View, StyleSheet} from 
 import Colors from '../../constants/Colors';
 import Images from '../../managers/ImagesManager';
 import DiscountItem from './DiscountItem';
-import BarsManager from '../../managers/BarsManager'
+import MerchantsManager from '../../managers/MerchantsManager'
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal'
 import Checkout from '../ticket/Checkout';
@@ -12,9 +12,9 @@ import AddPaymentMethod from '../ticket/AddPaymentMethod';
 const windowWidth = Dimensions.get('window').width
 export default class DiscountDetail extends Component
 {
-    static navigationOptions = {        
-        header: null,
-    }
+    // static navigationOptions = {        
+    //     header: null,
+    // }
 
     state = {
         showModal : false
@@ -34,7 +34,7 @@ export default class DiscountDetail extends Component
         return <View style={styles.container}>
 
             <Modal isVisible={this.state.showModal} style={{backgroundColor:'white', margin:0}}>            
-                <Checkout style={{flex: 1}}></Checkout>
+                <Checkout style={{flex: 1}} dismiss={()=>{this.setState({showModal : false})}}></Checkout>
             </Modal>             
 
             <View style={{marginTop: 12, marginBottom : 12, width : discountItemwidth,height: discountItemwidth*1.2}}>
@@ -43,7 +43,7 @@ export default class DiscountDetail extends Component
 
             <TouchableOpacity style={styles.location}>
                 <Text style={styles.locationText}>
-                    {BarsManager.barWithID(discount.bar_id).address_full}
+                    {MerchantsManager.merchantWithID(discount.merchant_id).address_full}
                 </Text>
             </TouchableOpacity>
             

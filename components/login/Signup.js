@@ -45,7 +45,6 @@ export default class Signup extends Component
     componentWillMount()
     {
         this.props.navigation.setParams({ signUp: this.signUp.bind(this)});
-
         this.signUp = this.signUp.bind(this)
     }
     
