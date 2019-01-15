@@ -3,10 +3,27 @@ import {AsyncStorage} from 'react-native'
 const bcrypt = require('react-native-bcrypt')
 const NetworkManager = require('./NetworkManager');
 
+
+
+module.exports.stripe_customer = null
 module.exports.isUser = true
 module.exports.isLoggedIn = false
 module.exports.loginCallback = function(){}
 module.exports.userData = null
+
+module.exports.getUserId = function(){
+    console.log('getting user id...')
+    if(module.exports.userData === null || module.exports.userData === undefined || module.exports.userData.id === undefined || module.exports.userData.id === null)
+    {
+        console.log('user not logged in')
+        _setLoggedOut();        
+        throw 'user not logged in'
+    }
+    else
+    {
+        return module.exports.userData.id
+    }
+}
 
 module.exports.load = async () => {
     try {
@@ -135,11 +152,51 @@ module.exports.FacebookLogin = async () => {
     return { success: false }
 }
 
-module.exports.loadStripeUser = function()
+module.exports.loadStripeUser = async () =>
 {
+    if(module.exports.userData === null)
+    {
+        throw "User has not been loaded"
+    }
 
+    let url = `${NetworkManager.domain}/RetrieveStripeCustomer`;
+    let body = {
+        user_id : module.exports.getUserId()
+    }
+
+    let response = await NetworkManager.JsonRequest('POST', body, url);
+
+    if(response.success === true)
+    {
+        module.exports.setStripeCustomer(response.output)
+        return response.output;
+    }
+    else
+    {
+        console.log(response.output);
+        return null;
+    }    
 }
 
+module.exports.setStripeCustomer = (customer_data)=>
+{
+    try 
+    {
+        if(customer_data && customer_data.id && customer_data.id.split('_')[0] === 'cus')
+        {
+            module.exports.stripe_customer = customer_data;
+        }
+        else
+        {
+            throw 'MALFORMED STRIPE CUSTOMER DATA RECEIVED:';
+        }   
+    }
+    catch(error)
+    {
+        console.log(error);
+        console.log(customer_data);
+    } 
+}
 module.exports.validRegister = (username,password,confirmPassword,email,gender,age) => {
 
     if(isFieldEmpty(username) || isFieldEmpty(email) || isFieldEmpty(password) || isFieldEmpty(confirmPassword))
@@ -274,6 +331,7 @@ var _setLoggedOut = async function()
 {
     console.log('Logging Out...')
     module.exports.userData = null
+    module.exports.stripe_customer = null
     await module.exports.save()
     module.exports.isLoggedIn = false
     module.exports.loginCallback()

@@ -1,18 +1,22 @@
-import React, {Component} from 'react'
-import {StripeAddCard, AddCard, addCardDefaultStyles} from 'react-native-checkout'
+import React, {Component} from 'react';
+import {View, ActivityIndicator, Alert} from 'react-native';
+import Modal from 'react-native-modal';
+import {StripeAddCard, AddCard, addCardDefaultStyles} from 'react-native-checkout';
 import { ColdObservable } from 'rxjs/testing/ColdObservable';
-import Colors from '../../constants/Colors'
-var stripe = require('stripe-client')('pk_test_kU9EUtqBnkm5dsjqrphsjzRa');
+import Colors from '../../constants/Colors';
+import PaymentsManager from '../../managers/PaymentsManager';
+import UserManager from '../../managers/UserManager';
+import ActivityModal from '../reusable/ActivityModal';
 
-var information = {
-    card: {
-      number: '4242424242424242',
-      exp_month: '02',
-      exp_year: '21',
-      cvc: '999',
-      name: 'Billy Joe'
-    }
-}
+// var information = {
+//     card: {
+//       number: '4242424242424242',
+//       exp_month: '02',
+//       exp_year: '21',
+//       cvc: '999',
+//       name: 'Billy Joe'
+//     }
+// }
 
 export default class AddPaymentMethod extends Component
 {
@@ -24,21 +28,84 @@ export default class AddPaymentMethod extends Component
         headerTitle: 'Add Credit Card'
     }
 
-    addPaymentMethod = async (cardNumber, cardExpiry, cardCvc) => {
-        console.log(`${cardNumber} ${cardExpiry} ${cardCvc}`)
-        var response = await stripe.createToken(information);
-        console.log('stripe response:');
-        console.log(response)
-        var token = response.id;
-        console.log(token)
+    state = {
+        isLoading : false
+    }
+    _addPaymentMethod = async (cardNumber, cardExpiry, cardCvc) => {
+        
+        let card = {
+            number : cardNumber,
+            exp_month : cardExpiry.split('/')[0],
+            exp_year : cardExpiry.split('/')[1],
+            cvc : cardCvc,
+        }
+
+        this.setState({isLoading : true},async ()=>{
+            try 
+            {
+                let response = await PaymentsManager.addPaymentMethod(card);        
+                if(response.success === true)
+                {                    
+                    let stripe_customer_data = response.output;                    
+                    UserManager.setStripeCustomer(stripe_customer_data);
+
+                    this.setState({isLoading : false},()=>{
+                        this.props.navigation.goBack();
+                        let callback = this.props.navigation.getParam('callback');
+                        if(callback)
+                        {
+                            callback();
+                        }
+                        else
+                        {
+                            console.log('no callback')
+                        }
+                    })
+                }
+                else
+                {
+                    throw 'The payment method could not be added at this time'
+                }
+            }
+            catch(error)
+            {                     
+                Alert.alert("Error", error, [
+                    { text: "Ok", onPress: () => { 
+                            this.setState({isLoading : false})
+                        }
+                    }    
+                  ])         
+            }            
+        })
     };
 
     render()
-    {        
-        return <AddCard style={[addCardDefaultStyles,{backgroundColor:Colors.themeBackground}]} scanCardVisible={false} addCardButtonText="Add Payment Method" cardNumberPlaceholderText="4242 4242 4242 4242" addCardHandler={(cardNumber, cardExpiry, cardCvc) => {
-            this.addPaymentMethod(cardNumber,cardExpiry,cardCvc);
-            return Promise.resolve(cardNumber) //return a promise when you're done
-          }}></AddCard>
+    {       
+        addCardDefaultStyles.addButton.backgroundColor = Colors.themeLight
+        addCardDefaultStyles.addButtonText.color = 'white'
+        addCardDefaultStyles.addButton.borderTopWidth = 0
+        addCardDefaultStyles.addButton.borderBottomWidth = 0
+
+            this.refs.AddCar
+
+        return (
+        <View style={{flex: 1}}>            
+            <AddCard style={[addCardDefaultStyles,{backgroundColor:Colors.themeBackground}]} scanCardVisible={false} addCardButtonText="Add Payment Method" cardNumberPlaceholderText="Card Number" addCardHandler={(cardNumber, cardExpiry, cardCvc) => {
+                this._addPaymentMethod(cardNumber,cardExpiry,cardCvc);
+                return Promise.resolve(cardNumber) //return a promise when you're done
+                }}>
+            </AddCard>
+{/* 
+            <Modal isVisible={this.state.isLoading} style={{alignItems: 'center', justifyContent: 'center'}}>
+                <ActivityIndicator style={{width : 40,height:40}}/>
+            </Modal> */}
+
+            <ActivityModal isVisible={this.state.isLoading}>
+
+            </ActivityModal>
+        </View>
+        )
+        
     }
 }
 

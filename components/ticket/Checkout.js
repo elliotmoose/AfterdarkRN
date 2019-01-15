@@ -2,22 +2,8 @@ import React, { Component } from 'react';
 import { View, Button, Text, TouchableOpacity, SafeAreaView, StyleSheet, ScrollView } from 'react-native';
 import Colors from '../../constants/Colors';
 import Picker from 'react-native-picker-select';
-
-
-var stripe = require('stripe-client')('pk_test_kU9EUtqBnkm5dsjqrphsjzRa');
-// import {PaymentsStripe as Stripe} from 'expo-payments-stripe'
-
+import UserManager from '../../managers/UserManager';
 // 'pk_live_qhATGjhaSUCT3PYUefZEHb8w'
-
-var information = {
-    card: {
-        number: '4242424242424242',
-        exp_month: '02',
-        exp_year: '21',
-        cvc: '999',
-        name: 'Billy Joe'
-    }
-}
 
 
 export default class Checkout extends Component {
@@ -69,10 +55,9 @@ export default class Checkout extends Component {
         return output;
     }
 
-    requestPayment = async () => {
-        var card = await stripe.createToken(information);
-        var token = card.id;
-        console.log(token)
+    _requestPayment = async () => {
+        let ticket = this.state.tickets[this.state.selectedTicket];
+        UserManager.purchase(ticket);
     };
 
     componentWillMount() {
@@ -214,7 +199,7 @@ export default class Checkout extends Component {
                         {this._renderDefaultPaymentMethod()}
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={this.requestPayment} style={{width : '100%',height : 45, backgroundColor : Colors.themeLight, marginBottom : 50}} >
+                    <TouchableOpacity onPress={this._requestPayment} style={{width : '100%',height : 45, backgroundColor : Colors.themeLight, marginBottom : 50}} >
                         <Text style={{fontFamily : 'avernier-bold', fontSize : 20, lineHeight: 45, textAlign: 'center',color : 'white', flex : 1}}>
                             Confirm Purchase
                         </Text>                    

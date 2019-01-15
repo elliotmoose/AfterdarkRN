@@ -42,7 +42,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
-
+        
     }
 
 
@@ -72,6 +72,7 @@ export default class App extends React.Component {
                         <AppNavigator style={{ backgroundColor: 'black'}}/>                        
                         // <PaymentNavigator></PaymentNavigator>       
                         // <PaymentMethods></PaymentMethods>                 
+                        // <AddPaymentMethod></AddPaymentMethod>
                     );
                 }
                 else {
