@@ -1,19 +1,18 @@
 import React from 'react';
 import { AppState, Platform, StatusBar, StyleSheet, Text, View, Button, SafeAreaView } from 'react-native';
 import { Asset, Font } from 'expo'
-import { AppNavigator } from './main/AppNavigator';
+import { AppNavigator } from './components/navigators/AppNavigator';
 import Loading from './screens/Loading';
 import LoginNavigator from './components/login/LoginNavigator';
-import Network from './managers/NetworkManager'
+// import NetworkManager from './managers/NetworkManager'
 import MerchantsManager from './managers/MerchantsManager'
+import DiscountsManager from './managers/DiscountsManager'
 import UserManager from './managers/UserManager'
 import Colors from './constants/Colors'
-import Checkout from './components/ticket/Checkout'
-import AddPaymentMethod from './components/ticket/AddPaymentMethod';
 import { EventRegister } from 'react-native-event-listeners';
 import Signup from './components/login/Signup';
-import PaymentNavigator from './components/navigators/PaymentNavigator';
-import PaymentMethods from './components/ticket/PaymentMethods';
+import Checkout from './components/payments/Checkout';
+import TicketScanning from './components/merchant/TicketScanning'
 
 export default class App extends React.Component {
 
@@ -21,44 +20,44 @@ export default class App extends React.Component {
         startedLoad: false,
         isLoading: true,
         isLoggedIn: UserManager.isLoggedIn,
-        isUser: UserManager.isUser
     }
 
     componentWillMount() {
-        Network.GetMerchants(function (merchants) {
-        });
+        UserManager.loginCallback = this.loginCallback.bind(this);        
+        
+        if (!this.state.startedLoad) {
+            this.setState({startedLoad: true})
+            this.initialAppLoad();            
+        }
 
-        Network.GetDiscounts(function (discounts) {
-        //     MerchantsManager.OnDiscountsLoaded(discounts);
-        });
 
-        Network.GetEvents(function (events) {
-        //     MerchantsManager.OnEventsLoaded(events)
-        });
-
-        UserManager.loginCallback = this.loginCallback.bind(this);
-        UserManager.load();
-        // UserManager.logout(); 
+        try {
+            MerchantsManager.GetMerchants();    
+            DiscountsManager.GetDiscounts();    
+            MerchantsManager.GetEvents();    
+        } catch (error) {
+            
+        }
     }
 
     componentDidMount() {
-        
+
     }
 
+    async initialAppLoad(){
+        await UserManager.load();        
+        await this.loadResources();        
+        this.setState({ isLoading: false });
+    }
 
-    loginCallback() {
+    async loginCallback() {
         //updates login state
-        this.setState({ isLoggedIn: UserManager.isLoggedIn, isUser: UserManager.isUser })
+        this.setState({ isLoggedIn: !(UserManager.userData===null)})
+
     }
 
     render() {
         StatusBar.setBarStyle('light-content', true);
-
-
-        if (!this.state.startedLoad) {
-            this.state.startedLoad = true
-            this.loadResources()
-        }
 
         if (this.state.isLoading) {
             return (
@@ -66,13 +65,16 @@ export default class App extends React.Component {
             );
         }
         else {
-            if (this.state.isLoggedIn) {
-                if (this.state.isUser) {
+            if (UserManager.userData) {
+                if (UserManager.userData.type == 'USER') {
                     return (
-                        <AppNavigator style={{ backgroundColor: 'black'}}/>                        
-                        // <PaymentNavigator></PaymentNavigator>       
-                        // <PaymentMethods></PaymentMethods>                 
-                        // <AddPaymentMethod></AddPaymentMethod>
+                        <AppNavigator style={{ backgroundColor: 'black'}}/>                                              
+                    );
+                }
+                else if (UserManager.userData.type == 'MERCHANT') {
+                    console.log('merchhhhh')
+                    return (
+                        <TicketScanning style={{ backgroundColor: '#000' }} />
                     );
                 }
                 else {
@@ -102,13 +104,10 @@ export default class App extends React.Component {
             'avenir-bold': require('./assets/fonts/AvenirNextCondensed/AvenirNextCondensed-Bold.ttf'),
             'avenir-medium': require('./assets/fonts/AvenirNextCondensed/AvenirNextCondensed-Medium.ttf')
         })
-
-        await this.loadingComplete()
     }
 
     loadingComplete() {
-        this.setState({ isLoading: false });
-        console.log('Loading done')
+        
     }
 }
 

@@ -1,7 +1,7 @@
 const NetworkManager = require('./NetworkManager');
 const UserManager = require('./UserManager');
-
-const stripe = require('stripe-client')('pk_test_kU9EUtqBnkm5dsjqrphsjzRa');
+//pk_live_fSzd7ndUhwgUckP6HFWTs2Tu
+const stripe = require('stripe-client')('pk_test_BCh1V8V7MU5ll31R4SaldRiE');
 
 module.exports.paymentMethods = []
 module.exports.selectedPaymentMethodIndex = 0
@@ -21,12 +21,18 @@ module.exports.addPaymentMethod = async (card) =>
     try 
     {
         var response = await stripe.createToken({card : card});
-        let token = response.id;
-        let user_id = UserManager.getUserId();    
+        let card_token = response.id;
+        let user_id = UserManager.getUserId(); 
+        if(user_id === undefined){throw 'User not logged in'}
+
+        if(response.error)
+        {
+            throw response.error.message
+        }
     
         let url = `${NetworkManager.domain}/AddPaymentMethod`;
         let body = {
-            token: token,
+            token: card_token,
             user_id : user_id
         }
     
@@ -36,13 +42,13 @@ module.exports.addPaymentMethod = async (card) =>
         {
             UserManager.setStripeCustomer(apiResponse.output);
         }
-        
+
         return apiResponse;
     }
     catch(error)
     {
         console.log(error)
-        throw 'Could not connect to server'
+        throw error
     }
 }
 
@@ -50,7 +56,8 @@ module.exports.removePaymentMethod = async (card_id)=>{
     try 
     {
         let user_id = UserManager.getUserId();    
-    
+        if(user_id === undefined){throw 'User not logged in'}
+
         let url = `${NetworkManager.domain}/RemovePaymentMethod`;
         let body = {
             card_id: card_id,
@@ -73,11 +80,32 @@ module.exports.removePaymentMethod = async (card_id)=>{
     }
 }
 
-module.exports.purchase = async (ticket) =>
-{
-    // var response = await stripe.createToken({card : });
-    // var token = response.id;
-    // console.log(token)
+module.exports.setDefaultPaymentMethod = async (card_id)=>{
+    try 
+    {
+        let user_id = UserManager.getUserId();            
+        if(user_id === undefined){throw 'User not logged in'}
+    
+        let url = `${NetworkManager.domain}/MakeDefaultPaymentMethod`;
+        let body = {
+            card_id: card_id,
+            user_id : user_id
+        }
+    
+        let apiResponse = await NetworkManager.JsonRequest('POST', body, url)
+
+        if(apiResponse.success)
+        {
+            UserManager.setStripeCustomer(apiResponse.output);
+        }
+        
+        return apiResponse;
+    }
+    catch(error)
+    {
+        console.log(error)
+        throw 'Could not connect to server'
+    }
 }
 
 module.exports.paymentMethods = ()=>
@@ -91,6 +119,24 @@ module.exports.paymentMethods = ()=>
         return []
     }
 }
+
+module.exports.defaultPaymentMethod = () =>
+{
+    if(UserManager.stripe_customer != null && UserManager.stripe_customer.default_source)
+    {
+        let source_id = UserManager.stripe_customer.default_source;
+        for(let source of UserManager.stripe_customer.sources.data)
+        {
+            if(source.id == source_id)
+            {
+                return source
+            }
+        }
+    }
+
+    return null        
+}
+
 
 
 //      Object {

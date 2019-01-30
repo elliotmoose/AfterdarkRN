@@ -27,7 +27,7 @@ export default class EventItem extends Component
                             {`${this.props.event.time}`}
                         </Text>
 
-                        <Text style={styles.eventDetail}>
+                        <Text numberOfLines={2} style={[styles.eventDetail, {height: 50}]}>
                             {`${this.props.event.location}`}
                         </Text>
 
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
         backgroundColor : 'rgba(0,0,0,0.5)',
         display: 'flex',
         justifyContent : 'center',
+        alignItems: 'center'
     },
     eventPrice : {
         textAlign : 'center',
@@ -91,6 +92,7 @@ const styles = StyleSheet.create({
         color : 'white',
         textAlign : 'center',
         height : 20,
+        width: '70%',
         marginTop : 6
     },
     redeemed : {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions,Text,ImageBackground,TouchableOpacity,View, StyleSheet} from 'react-native';
+import {Dimensions,Text,ImageBackground, Image, TouchableOpacity,View, StyleSheet} from 'react-native';
 import Colors, { black } from '../../constants/Colors';
 import Images from '../../managers/ImagesManager';
 
@@ -13,30 +13,40 @@ export default class DiscountItem extends Component
     render()
     {        
         return <View style={[this.props.style,styles.container]}>
-            <TouchableOpacity onPress={this.props.onPress}>
-                <ImageBackground style={styles.discountImage} source={this.props.discount.image}>
-                    <View style={styles.blackTint}>
-                        <Text style={styles.discountAvailability}>
-                            {this.props.discount.curAvailCount}/{this.props.discount.maxAvailCount}
-                        </Text>
-                        <Text style={styles.discountPrice}>
-                            {this.props.discount.amount}
-                        </Text>
-                        <Text style={styles.discountDescription}>
-                            {this.props.discount.name}
-                        </Text>
-                        <Text style={styles.discountClaim}>
-                            CLAIM >
-                        </Text>
+            <TouchableOpacity style={{flex: 1}} onPress={this.props.onPress}>
+                <View style={{width: '100%', height:'100%',position:'absolute'}}>
+                    <Image style={{width: '100%',height: '100%', opacity: 0.4}} source={this.props.discount.image}/>
+                </View>
+                <View style={{width: '100%', height:'100%',position:'absolute'}}>
+                    <Text style={styles.discountAvailability}>
+                        {this.props.discount.count}/{this.props.discount.total}
+                    </Text>
+                    <Text style={styles.discountPrice}>
+                        {this.props.discount.amount}
+                    </Text>
+                    <Text style={styles.discountDescription}>
+                        {this.props.discount.name}
+                    </Text>
+                    <Text style={styles.discountClaim}>
+                        CLAIM >
+                    </Text>
 
-                        <View style={this.props.discount.curAvailCount==0? styles.redeemed : {opacity : 0}}>
-                            <Text style={styles.redeemedLabel}>
-                                FULLY REDEEMED
-                            </Text>
-                        </View>
+                    <View style={this.props.discount.count==0? styles.redeemed : {opacity : 0}}>
+                        <Text adjustsFontSizeToFit minimumFontScale={0.5} style={styles.redeemedLabel}>
+                            FULLY REDEEMED
+                        </Text>
+                    </View>    
+                </View>
+            {/* <View style={{position:'absolute', width: '100%', height:'100%'}}>
+
+            </View>
+                 */}
+
+                {/* <ImageBackground style={styles.discountImage} source={this.props.discount.image}>
+                    <View style={styles.blackTint}>
                         
                     </View>
-                </ImageBackground>
+                </ImageBackground> */}
             </TouchableOpacity>
                           
         </View>
@@ -45,8 +55,6 @@ export default class DiscountItem extends Component
 
 const styles = StyleSheet.create({
     container : {
-        flex : 1, 
-        display : 'flex',        
         backgroundColor : 'black',        
         borderWidth : 2,
         borderColor : Colors.themeLight,
@@ -63,7 +71,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',        
         opacity : 1,
         display : 'flex',
-        justifyContent : 'center'
+        justifyContent : 'center',
+        borderWidth : 2,
+        borderColor : Colors.themeLight,
     },
     blackTint : { //container of text
         flexGrow : 1,
@@ -123,7 +133,7 @@ const styles = StyleSheet.create({
         fontFamily : 'mohave',
         textAlign : 'center',
         textAlignVertical : 'center',
-        fontSize : 20,
+        fontSize : 18,
         lineHeight : 40
         
     }

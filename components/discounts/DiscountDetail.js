@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
-import {Dimensions,Text,ImageBackground,TouchableOpacity,View, StyleSheet} from 'react-native';
+import {Dimensions,Text,ImageBackground,TouchableOpacity,View, StyleSheet, Alert} from 'react-native';
 import Colors from '../../constants/Colors';
 import Images from '../../managers/ImagesManager';
 import DiscountItem from './DiscountItem';
 import MerchantsManager from '../../managers/MerchantsManager'
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal'
-import Checkout from '../ticket/Checkout';
-import AddPaymentMethod from '../ticket/AddPaymentMethod';
+import Checkout from '../payments/Checkout';
+import AddPaymentMethod from '../payments/AddPaymentMethod';
+import DiscountsManager from '../../managers/DiscountsManager';
+import ActivityModal from '../../components/reusable/ActivityModal'
 
 const windowWidth = Dimensions.get('window').width
 export default class DiscountDetail extends Component
@@ -16,8 +18,90 @@ export default class DiscountDetail extends Component
     //     header: null,
     // }
 
+    _showClaimDiscount()
+    {
+        const {navigation} = this.props
+        const discount_id = navigation.getParam('discount_id')          
+        navigation.navigate('claimDiscount',{discount_id: discount_id});
+
+    }
+
+    _addDiscountToWallet()
+    {
+        
+        const {navigation} = this.props
+        const discount = navigation.getParam('discount')  
+        
+        this.setState({isLoading: true},async ()=>{
+            try {
+                if(!discount || !discount.id)
+                {
+                    throw 'no discount'
+                }
+                
+                let response = await DiscountsManager.addToWallet(discount.id);    
+                
+                if(response.error)
+                {
+                    throw response.error
+                }
+
+                Alert.alert('Done!', 'The discount has been added to your wallet',[{
+                    text: 'Ok',
+                    onPress: ()=>{
+                        if(discount && discount.count)
+                        {
+                            discount.count -= 1; 
+                        }
+                        
+                        this.setState({isLoading: false})
+                    }
+                }])                
+
+            } catch (error) {        
+                console.log(error)        
+                if (error.message) 
+                {
+                    if(error.statusText)
+                    {
+                        Alert.alert(error.statusText, error.message,[{
+                            text: 'Ok',
+                            onPress: ()=>{
+                                this.setState({isLoading: false})
+                            }
+                        }])
+                    }
+                    else
+                    {
+                        Alert.alert('Error', error.message,[{
+                            text: 'Ok',
+                            onPress: ()=>{
+                                this.setState({isLoading: false})
+                            }
+                        }])
+                    }
+                }
+                else
+                {
+                    Alert.alert('Error', 'The discount could not be added at this time',[{
+                        text: 'Ok',
+                        onPress: ()=>{
+                            this.setState({isLoading: false})
+                        }
+                    }])
+                }                
+            } 
+        })
+    }
+
     state = {
-        showModal : false
+        isLoading : false
+    }
+
+    constructor()
+    {
+        super();
+        this._addDiscountToWallet = this._addDiscountToWallet.bind(this);
     }
     componentWillMount()
     {
@@ -26,19 +110,16 @@ export default class DiscountDetail extends Component
     render()
     {
         const {navigation} = this.props
+        const isConfirmationMode = navigation.getParam('isConfirmationMode') ? navigation.getParam('isConfirmationMode') : false
         const discount = navigation.getParam('discount')  
 
         const margin = 5
         const discountItemwidth = windowWidth/2-margin*3
         
         return <View style={styles.container}>
-
-            <Modal isVisible={this.state.showModal} style={{backgroundColor:'white', margin:0}}>            
-                <Checkout style={{flex: 1}} dismiss={()=>{this.setState({showModal : false})}}></Checkout>
-            </Modal>             
-
+            <ActivityModal isVisible={this.state.isLoading}/>
             <View style={{marginTop: 12, marginBottom : 12, width : discountItemwidth,height: discountItemwidth*1.2}}>
-                <DiscountItem onPress={()=>{}} discount={discount}/>                
+                <DiscountItem onPress={()=>{}} discount={discount} style={{flex: 1}}/>                
             </View>            
 
             <TouchableOpacity style={styles.location}>
@@ -53,9 +134,11 @@ export default class DiscountDetail extends Component
                 </Text>
             </ScrollView>      
 
-            <TouchableOpacity style={{width:'80%',height:45,backgroundColor:Colors.themeLight, marginBottom : 36, borderRadius: 8}} onPress={()=>{this.setState({showModal: true})}}>
+            <TouchableOpacity style={{width:'80%',height:45,backgroundColor:Colors.themeLight, marginBottom : 36, borderRadius: 8}} onPress={()=>{
+                isConfirmationMode ? this._showClaimDiscount() : this._addDiscountToWallet();
+            }}>
                 <Text style={{color:'white',textAlign:'center',fontFamily : 'avenir-medium' , fontSize: 20, lineHeight: 45}}>
-                    ADD TO WALLET
+                    {isConfirmationMode ? 'CLAIM NOW' : 'ADD TO WALLET'}
                 </Text>    
             </TouchableOpacity>      
         </View>

@@ -6,8 +6,8 @@ import EventItem from './EventItem';
 import MerchantsManager from '../../managers/MerchantsManager'
 import { ScrollView } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal'
-import Checkout from '../ticket/Checkout';
-import AddPaymentMethod from '../ticket/AddPaymentMethod';
+import Checkout from '../payments/Checkout';
+import AddPaymentMethod from '../payments/AddPaymentMethod';
 import PaymentNavigator from '../navigators/PaymentNavigator'
 const windowWidth = Dimensions.get('window').width
 export default class EventDetail extends Component
@@ -31,8 +31,7 @@ export default class EventDetail extends Component
         return <View style={styles.container}>
 
             <Modal isVisible={this.state.showModal} style={{backgroundColor:'white', flex : 1,margin:0}} >            
-                <PaymentNavigator screenProps={{event: event,dismiss : ()=>{this.setState({showModal : false})}}}/>
-                {/* <Checkout style={{flex: 1}} dismiss={()=>{this.setState({showModal : false})}}></Checkout> */}
+                <PaymentNavigator screenProps={{event: event,dismiss : ()=>{this.setState({showModal : false})}, navigateToTickets : ()=>{this.props.navigation.navigate('Wallet',{forceTickets : true})}}}/>
             </Modal>             
 
             <View style={{width:eventItemwidth, height: eventItemwidth*0.5}}>

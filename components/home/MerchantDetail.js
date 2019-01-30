@@ -7,6 +7,7 @@ import DiscountItem from '../discounts/DiscountItem'
 
 import Network from '../../managers/NetworkManager'
 import MerchantsManager from '../../managers/MerchantsManager'
+import DiscountsManager from '../../managers/DiscountsManager'
 import Colors from '../../constants/Colors'
 
 import { EventRegister } from 'react-native-event-listeners'
@@ -35,22 +36,33 @@ export class MerchantDetail extends Component {
     componentDidMount()
     {        
         let self = this;
-        this.refreshDiscountList(MerchantsManager.discounts)
-        this.refreshEventsList(MerchantsManager.events)
-        
+        this.refreshDiscountList(DiscountsManager.discounts)
+        this.refreshEventsList(MerchantsManager.events)        
+        this.updateTabSelection()
+    }
+
+    componentWillMount()
+    {
         //subscribe to discount load event
-        EventRegister.addEventListener('DISCOUNTS_LOADED', (discounts) => {            
+        this.discountListener = EventRegister.addEventListener('DISCOUNTS_LOADED', (discounts) => {            
             self.refreshDiscountList(discounts);
             self.updateTabSelection()
         })
 
-        EventRegister.addEventListener('EVENTS_LOADED', (events)=>{
+        this.eventsListener = EventRegister.addEventListener('EVENTS_LOADED', (events)=>{
             self.refreshEventsList(events)
             self.updateTabSelection()
         })
 
-        this.updateTabSelection()
+        this.navigateToTickets = this.props.navigation.getParam('navigateToTickets');
     }
+
+    componentWillUnmount()
+    {
+        EventRegister.removeEventListener(this.discountListener); 
+        EventRegister.removeEventListener(this.eventsListener); 
+    }
+
 
     static navigationOptions = {        
         headerStyle: {
@@ -69,7 +81,6 @@ export class MerchantDetail extends Component {
             if(event.merchant_id == thisMerchant.id)
             {
                 thisMerchantEvents.push(event)
-                console.log(event.name)
             }            
         }
 
@@ -96,7 +107,6 @@ export class MerchantDetail extends Component {
             if(discount.merchant_id == thisMerchant.id)
             {
                 thisMerchantDiscounts.push(discount)
-                console.log(discount.name)
             }            
         }
 
@@ -166,7 +176,7 @@ export class MerchantDetail extends Component {
                         return (<EventItem event={item} onPress={()=>{this.displayDetailViewWithEvent(item)}} style={{width : eventItemwidth,height: eventItemwidth*0.6, margin : margin}}/>)
                     }
                 }}
-                keyExtractor={(item) => item.name}
+                keyExtractor={(item) => item.id}
                 contentContainerStyle={style.discountContainer}
                 key='events'
                 >
@@ -190,8 +200,9 @@ export class MerchantDetail extends Component {
                                         else
                                         {
                                             const margin = 5
-                                            const discountItemwidth = windowWidth/2-margin*3
-                                            return (<DiscountItem discount={item} onPress={()=>{this.displayDetailViewWithDiscount(item)}} style={{width : discountItemwidth,height: discountItemwidth*1.2, margin : margin}}/>)
+                                            const discountItemWidth = windowWidth/2-margin*3
+                                            const discountItemHeight = discountItemWidth*1.2;
+                                            return (<DiscountItem discount={item} height={discountItemHeight} width={discountItemWidth} onPress={()=>{this.displayDetailViewWithDiscount(item)}} style={{width : discountItemWidth,height: discountItemWidth*1.2, margin : margin}}/>)
                                         }
                                     }}
                                     keyExtractor={(item) => item.name}

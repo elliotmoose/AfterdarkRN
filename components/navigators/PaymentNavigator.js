@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 import { Image, View, Text, Button, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
-import Checkout from '../ticket/Checkout'
-import AddPaymentMethod from '../ticket/AddPaymentMethod';
-import PaymentMethods from '../ticket/PaymentMethods';
+import Checkout from '../payments/Checkout'
+import AddPaymentMethod from '../payments/AddPaymentMethod';
+import PaymentMethods from '../payments/PaymentMethods';
 import DiscountDetail from '../discounts/DiscountDetail';
 import Colors from '../../constants/Colors';
 
